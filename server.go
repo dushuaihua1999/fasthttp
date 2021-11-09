@@ -1875,6 +1875,7 @@ func acceptConn(s *Server, ln net.Listener, lastPerIPErrorTime *time.Time) (net.
 			panic("BUG: net.Listener returned (nil, nil)")
 		}
 		if s.MaxConnsPerIP > 0 {
+			// 检查每个ip上的连接数是否达到了最大数
 			pic := wrapPerIPConn(s, c)
 			if pic == nil {
 				if time.Since(*lastPerIPErrorTime) > time.Minute {
@@ -2030,7 +2031,7 @@ func (s *Server) serveConn(c net.Conn) (err error) {
 	defer s.serveConnCleanup()
 	atomic.AddUint32(&s.concurrency, 1)
 
-	var proto string
+	var proto string //应用层协议
 	if proto, err = s.getNextProto(c); err != nil {
 		return
 	}
